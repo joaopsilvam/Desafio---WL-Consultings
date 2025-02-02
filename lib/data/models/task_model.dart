@@ -10,5 +10,8 @@ class TaskModel {
   @HiveField(1)
   bool isCompleted;
 
-  TaskModel({required this.title, this.isCompleted = false});
+  @HiveField(2)
+  String? description;
+
+  TaskModel({required this.title, this.isCompleted = false, this.description});
 }
