@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'todo_screen.dart';
-import 'create_task_screen.dart';
+import '../../widgets/create_task_modal.dart';
 import 'search_screen.dart';
 import 'completed_tasks_screen.dart';
 
@@ -16,15 +16,15 @@ class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    ToDoScreen(),
+    const ToDoScreen(),
     Container(),
-    SearchScreen(),
-    CompletedTasksScreen(),
+    const SearchScreen(),
+    const CompletedTasksScreen(),
   ];
 
   void _onItemTapped(int index) {
     if (index == 1) {
-      _showCreateTaskModal(); // 🔹 Mostra o modal ao clicar na aba "Criar"
+      _showCreateTaskModal();
     } else {
       setState(() {
         _selectedIndex = index;

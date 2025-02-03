@@ -8,6 +8,9 @@ class TaskViewModel extends ChangeNotifier {
   final int _page = 0;
   final int _limit = 10;
 
+  List<TaskModel> get incompleteTasks => tasks.where((task) => !task.isCompleted).toList();
+  List<TaskModel> get completedTasks => tasks.where((task) => task.isCompleted).toList();
+
   List<TaskModel> get tasks => _tasks;
 
   void loadTasks() {
@@ -15,25 +18,34 @@ class TaskViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteAllCompletedTasks() {
+    tasks.removeWhere((task) => task.isCompleted);
+    notifyListeners();
+  }
+  
   void loadMoreTasks() {
     int startIndex = _tasks.length;
-    List<TaskModel> moreTasks = _repository.getTasks().skip(startIndex).take(_limit).toList();
-    
+    List<TaskModel> moreTasks =
+        _repository.getTasks().skip(startIndex).take(_limit).toList();
+
     if (moreTasks.isNotEmpty) {
       _tasks.addAll(moreTasks);
       notifyListeners();
     }
   }
 
-  void addTask(String title) {
-    _repository.addTask(TaskModel(title: title));
+  void addTask(TaskModel task) {
+    _repository.addTask(task);
     loadTasks();
   }
 
   void toggleTaskCompletion(int index) {
     final task = _tasks[index];
-    _repository.updateTask(index, TaskModel(title: task.title, isCompleted: !task.isCompleted));
+    task.isCompleted = !task.isCompleted;
+    _repository.updateTask(
+        index, TaskModel(title: task.title, isCompleted: !task.isCompleted));
     loadTasks();
+    notifyListeners();
   }
 
   void deleteTask(int index) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/task_viewmodel.dart';
-import '../../data/models/task_model.dart';
+import '../presentation/viewmodels/task_viewmodel.dart';
+import '../data/models/task_model.dart';
 
 class CreateTaskModal extends StatefulWidget {
   const CreateTaskModal({super.key});
@@ -21,7 +21,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
     if (taskTitle.isNotEmpty) {
       final viewModel = Provider.of<TaskViewModel>(context, listen: false);
-      viewModel.addTask(TaskModel(title: taskTitle, description: taskNote) as String);
+      viewModel.addTask(TaskModel(title: taskTitle, description: taskNote));
       Navigator.pop(context); // 🔹 Fecha o modal após adicionar a task
     }
   }
@@ -29,9 +29,11 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: MediaQuery.of(context).viewInsets, // 🔹 Evita que o teclado cubra o modal
+      padding: MediaQuery.of(context)
+          .viewInsets, // 🔹 Evita que o teclado cubra o modal
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.5, // 🔹 Ocupa metade da tela
+        height:
+            MediaQuery.of(context).size.height * 0.5, // 🔹 Ocupa metade da tela
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -43,54 +45,65 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             // 🔹 Campo de Texto com Ícone
             Row(
               children: [
-                const Icon(CupertinoIcons.pencil_outline, color: Color(0xFF007FFF)),
+                const Icon(
+                  CupertinoIcons.app,
+                  color: Color(0xFFB4BED0),
+                  size: 24,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
                     controller: _titleController,
                     decoration: const InputDecoration(
                       hintText: "What’s in your mind?",
+                      hintStyle: TextStyle(
+                        color: Color(0xFFB4BED0),
+                      ),
                       border: InputBorder.none,
+                      focusColor: Color(0xFFB4BED0),
                     ),
                   ),
                 ),
               ],
             ),
-            const Divider(),
-
-            // 🔹 Nota com Ícone de Lápis
             Row(
               children: [
-                const Icon(CupertinoIcons.create, color: Colors.grey),
+                const Icon(CupertinoIcons.pencil, color: Colors.grey),
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
                     controller: _noteController,
                     decoration: const InputDecoration(
                       hintText: "Add a note...",
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFFB4BED0),
+                      ),
                       border: InputBorder.none,
+                      focusColor: Color(0xFFB4BED0),
                     ),
                   ),
                 ),
               ],
             ),
-
-            const Spacer(), // 🔹 Empurra o botão para baixo
-
-            // 🔹 Botão "Create"
             Align(
               alignment: Alignment.bottomRight,
-              child: ElevatedButton(
+              child: TextButton(
                 onPressed: _createTask,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF007FFF),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF007FFF),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                ),
+                child: const Text(
+                  "Create",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(
+                        0xFF007FFF),
                   ),
                 ),
-                child: const Text("Create"),
               ),
             ),
           ],

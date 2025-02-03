@@ -1,4 +1,4 @@
-import 'package:desafio_mobile/presentation/views/create_task_screen.dart';
+import 'package:desafio_mobile/widgets/create_task_modal.dart';
 import 'package:desafio_mobile/presentation/views/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +21,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<TaskViewModel>(context);
-    final int taskCount = viewModel.tasks.length;
-    
+    final int taskCount = viewModel.incompleteTasks.length;
+
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +67,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
           ),
           Expanded(
               child: Center(
-            child: viewModel.tasks.isEmpty
+            child: viewModel.incompleteTasks.isEmpty
                 ? _buildEmptyState(context)
                 : _buildTaskList(viewModel),
           )),
@@ -97,12 +97,15 @@ class _ToDoScreenState extends State<ToDoScreen> {
         const SizedBox(height: 30),
         ElevatedButton.icon(
           onPressed: () {
-            final mainScreenState =
-                context.findAncestorStateOfType<MainScreenState>();
-            if (mainScreenState != null) {
-              mainScreenState
-                  .changeTab(1); // 1 = Index da aba "CreateTaskScreen"
-            }
+            // 🔹 Abre o modal em vez de mudar a aba
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder: (context) => const CreateTaskModal(),
+            );
           },
           icon: const Icon(
             CupertinoIcons.add,
@@ -132,17 +135,17 @@ class _ToDoScreenState extends State<ToDoScreen> {
 
   Widget _buildTaskList(TaskViewModel viewModel) {
     return ListView.builder(
-      itemCount: viewModel.tasks.length,
+      itemCount: viewModel.incompleteTasks.length,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemBuilder: (context, index) {
-        final task = viewModel.tasks[index];
+        final task = viewModel.incompleteTasks[index];
         final isExpanded = expandedTasks[index] ?? false;
         final isDeleting = taskToDelete == index;
 
         return GestureDetector(
           onLongPress: () {
             setState(() {
-              taskToDelete = index; // 🔹 Mostra os botões ao segurar a tarefa
+              taskToDelete = index;
             });
           },
           child: Container(
@@ -157,10 +160,23 @@ class _ToDoScreenState extends State<ToDoScreen> {
               children: [
                 Row(
                   children: [
-                    const Icon(
-                      CupertinoIcons.app,
-                      color: Color(0xFFB4BED0),
-                      size: 24,
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          task.isCompleted = !task.isCompleted;
+                        });
+                        Provider.of<TaskViewModel>(context, listen: false)
+                            .toggleTaskCompletion(index);
+                      },
+                      child: Icon(
+                        task.isCompleted
+                            ? CupertinoIcons.checkmark_square_fill
+                            : CupertinoIcons.square,
+                        color: task.isCompleted
+                            ? const Color(0xFF007FFF)
+                            : const Color(0xFFB4BED0),
+                        size: 24,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
