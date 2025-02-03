@@ -22,7 +22,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     if (taskTitle.isNotEmpty) {
       final viewModel = Provider.of<TaskViewModel>(context, listen: false);
       viewModel.addTask(TaskModel(title: taskTitle, description: taskNote));
-      Navigator.pop(context); // 🔹 Fecha o modal após adicionar a task
+      Navigator.pop(context);
     }
   }
 
@@ -30,10 +30,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Widget build(BuildContext context) {
     return Padding(
       padding: MediaQuery.of(context)
-          .viewInsets, // 🔹 Evita que o teclado cubra o modal
+          .viewInsets,
       child: Container(
         height:
-            MediaQuery.of(context).size.height * 0.5, // 🔹 Ocupa metade da tela
+            MediaQuery.of(context).size.height * 0.5,
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -42,7 +42,6 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Campo de Texto com Ícone
             Row(
               children: [
                 const Icon(
