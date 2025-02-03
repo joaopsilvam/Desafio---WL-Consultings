@@ -77,18 +77,15 @@ flutter test
 ```sh
 /lib
 │── /data
-│   ├── /models                # Modelos de dados (TaskModel)
-│   ├── /datasources           # Fonte de dados (Hive Local)
-│   ├── /repositories          # Repositório que interage com os dados
-│
-│── /domain
-│   ├── /usecases              # Casos de uso (Adicionar, Remover, Marcar tarefa)
+│   ├── /models                
+│   ├── /repositories         
+│   ├── /services         
 │
 │── /presentation
-│   ├── /viewmodels            # ViewModels para gerenciar estado
-│   ├── /views                 # Telas da aplicação
+│   ├── /viewmodels            
+│   ├── /views                
 │
-│── /widgets                   # Componentes reutilizáveis
+│── /widgets                   
 ```
 
 ---
