@@ -2,13 +2,37 @@ import 'package:hive/hive.dart';
 import '../models/task_model.dart';
 
 class TaskRepository {
-  final Box<TaskModel> _taskBox = Hive.box<TaskModel>('tasks');
+  static late Box<TaskModel> _taskBox;
+  static bool _initialized = false; // 🔹 Evita registrar o adapter mais de uma vez
 
-  List<TaskModel> getTasks() => _taskBox.values.toList();
+  /// 🔹 Inicializa o Hive apenas uma vez
+  static Future<void> init() async {
+    if (!_initialized) {
+      if (!Hive.isAdapterRegistered(0)) {
+        Hive.registerAdapter(TaskModelAdapter()); // 🔹 Registra o adapter apenas uma vez
+      }
+      _taskBox = await Hive.openBox<TaskModel>('tasksBox');
+      _initialized = true;
+    }
+  }
 
-  void addTask(TaskModel task) => _taskBox.add(task);
+  /// 🔹 Retorna todas as tarefas salvas localmente
+  List<TaskModel> getTasks() {
+    return _taskBox.values.toList();
+  }
 
-  void updateTask(int index, TaskModel task) => _taskBox.putAt(index, task);
+  /// 🔹 Adiciona uma nova tarefa
+  Future<void> addTask(TaskModel task) async {
+    await _taskBox.add(task);
+  }
 
-  void deleteTask(int index) => _taskBox.deleteAt(index);
+  /// 🔹 Atualiza uma tarefa existente
+  Future<void> updateTask(int index, TaskModel task) async {
+    await _taskBox.putAt(index, task);
+  }
+
+  /// 🔹 Remove uma tarefa
+  Future<void> deleteTask(int index) async {
+    await _taskBox.deleteAt(index);
+  }
 }

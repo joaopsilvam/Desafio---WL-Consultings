@@ -13,5 +13,13 @@ class TaskModel {
   @HiveField(2)
   String? description;
 
-  TaskModel({required this.title, this.isCompleted = false, this.description});
+  @HiveField(3)
+  bool isSynced;
+  
+  TaskModel({
+    required this.title,
+    this.isCompleted = false,
+    this.description,
+    this.isSynced = true,
+  });
 }

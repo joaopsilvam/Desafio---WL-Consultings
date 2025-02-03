@@ -1,5 +1,6 @@
 import 'package:desafio_mobile/widgets/create_task_modal.dart';
 import 'package:desafio_mobile/presentation/views/main_screen.dart';
+import 'package:desafio_mobile/widgets/empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,8 +16,8 @@ class ToDoScreen extends StatefulWidget {
 }
 
 class _ToDoScreenState extends State<ToDoScreen> {
-  Map<int, bool> expandedTasks = {}; // 🔹 Controla as tasks expandidas
-  int? taskToDelete; // 🔹 Controla a task que está em modo de exclusão
+  Map<int, bool> expandedTasks = {};
+  int? taskToDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -68,68 +69,11 @@ class _ToDoScreenState extends State<ToDoScreen> {
           Expanded(
               child: Center(
             child: viewModel.incompleteTasks.isEmpty
-                ? _buildEmptyState(context)
+                ? const EmptyStateWidget(message: 'You have no task listed.')
                 : _buildTaskList(viewModel),
           )),
         ],
       ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Image.asset(
-          'images/tasks.png',
-          height: 80,
-        ),
-        const SizedBox(height: 20),
-        const Text(
-          'You have no task listed.',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton.icon(
-          onPressed: () {
-            // 🔹 Abre o modal em vez de mudar a aba
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (context) => const CreateTaskModal(),
-            );
-          },
-          icon: const Icon(
-            CupertinoIcons.add,
-            color: Color(0xFF007FFF),
-          ),
-          label: const Text(
-            'Create task',
-            style: TextStyle(
-              color: Color(0xFF007FFF),
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(26, 0, 128, 255),
-            foregroundColor: const Color(0xFF007FFF),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 0,
-          ),
-        ),
-      ],
     );
   }
 
@@ -162,11 +106,14 @@ class _ToDoScreenState extends State<ToDoScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        setState(() {
-                          task.isCompleted = !task.isCompleted;
-                        });
-                        Provider.of<TaskViewModel>(context, listen: false)
-                            .toggleTaskCompletion(index);
+                        final viewModel =
+                            Provider.of<TaskViewModel>(context, listen: false);
+                        final taskIndex = viewModel.tasks
+                            .indexWhere((t) => t.title == task.title);
+
+                        if (taskIndex != -1) {
+                          viewModel.toggleTaskCompletion(taskIndex);
+                        }
                       },
                       child: Icon(
                         task.isCompleted
@@ -225,8 +172,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
                           onPressed: () {
                             viewModel.deleteTask(index);
                             setState(() {
-                              taskToDelete =
-                                  null; // 🔹 Oculta os botões após deletar
+                              taskToDelete = null;
                             });
                           },
                           style: ElevatedButton.styleFrom(

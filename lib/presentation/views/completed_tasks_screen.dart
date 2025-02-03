@@ -1,3 +1,4 @@
+import 'package:desafio_mobile/widgets/empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -57,32 +58,8 @@ class _CompletedTasksScreenState extends State<CompletedTasksScreen> {
 
           Expanded(
             child: taskCount == 0
-                ? _buildEmptyState(context)
+                ? const EmptyStateWidget(message: 'No completed tasks yet.')
                 : _buildTaskList(viewModel),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            'images/tasks.png',
-            height: 80,
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'No completed tasks yet.',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
           ),
         ],
       ),
@@ -109,19 +86,22 @@ class _CompletedTasksScreenState extends State<CompletedTasksScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    task.isCompleted = !task.isCompleted;
-                  });
-                  Provider.of<TaskViewModel>(context, listen: false)
-                      .toggleTaskCompletion(index);
+                  final viewModel =
+                      Provider.of<TaskViewModel>(context, listen: false);
+                  final taskIndex =
+                      viewModel.tasks.indexWhere((t) => t.title == task.title);
+
+                  if (taskIndex != -1) {
+                    viewModel.toggleTaskCompletion(taskIndex);
+                  }
                 },
                 child: Icon(
-                  !task.isCompleted
-                      ? CupertinoIcons.square
-                      : CupertinoIcons.checkmark_square_fill,
+                  task.isCompleted
+                      ? CupertinoIcons.checkmark_square_fill
+                      : CupertinoIcons.square,
                   color: task.isCompleted
-                      ? const Color(0xFFB4BED0)
-                      : const Color(0xFF007FFF),
+                      ? const Color(0xFF007FFF)
+                      : const Color(0xFFB4BED0),
                   size: 24,
                 ),
               ),
