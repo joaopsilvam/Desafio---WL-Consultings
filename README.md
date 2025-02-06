@@ -1,4 +1,4 @@
-# 📝 Desafio - WL Consultings
+# 📝 Flutter - Lista de Tarefas
 
 Este é um aplicativo de lista de tarefas desenvolvido em **Flutter**, seguindo o padrão **MVVM (Model-View-ViewModel)**.  
 A aplicação é **Offline First**, armazenando as tarefas localmente usando **Hive**, garantindo que os dados sejam preservados mesmo sem conexão com a internet.
